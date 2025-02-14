@@ -47,7 +47,25 @@ import { useInView } from 'react-intersection-observer';
 
 import { useIsLaptop } from '@/hooks/use-laptop';
 
+import useApi from '@/utils/api';
+
 export default function Dashboard() {
+    const api = useApi();
+
+    const testeApi = async () => {
+        try {
+            const response = await api.get('/orders', {
+                params: {
+                    initialUpdatedAt: '2025-02-13T00:00:00Z',
+                    finalUpdatedAt: '2025-02-13T23:59:59Z',
+                },
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+        }
+    };
+
     const isLaptop = useIsLaptop();
 
     // Exibe o elemento com 10% dele visível na tela
@@ -76,6 +94,13 @@ export default function Dashboard() {
                     finanças da sua empresa, conhecer as vendas de cada produto,
                     analisar informações da empresa e muito mais.
                 </p>
+
+                <button
+                    className="bg-primary-700 text-gray-50 p-2 rounded-md"
+                    onClick={testeApi}
+                >
+                    Teste API
+                </button>
             </section>
 
             <section id="statistics" className="flex flex-col gap-8">
