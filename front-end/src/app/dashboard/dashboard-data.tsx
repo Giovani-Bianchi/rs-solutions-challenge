@@ -1,6 +1,7 @@
 import { ChartConfig } from '@/components/ui/chart';
 
 import createApiInstance from '@/utils/api';
+import { brlFormatter } from '@/utils/format';
 
 // Dados da Seção de Estatísticas
 
@@ -10,10 +11,6 @@ export const getOrders = async (
     setTotalValueOrders: any,
 ) => {
     const api = await createApiInstance();
-    const formatter = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    });
 
     try {
         const response = await api.get('/orders', {
@@ -29,9 +26,11 @@ export const getOrders = async (
             totalValue += orderValue;
         }
 
-        setTotalValueOrders(formatter.format(totalValue));
+        setTotalValueOrders(brlFormatter.format(totalValue));
         setTotalOrders(response.data.length);
-        setAverageTicket(formatter.format(totalValue / response.data.length));
+        setAverageTicket(
+            brlFormatter.format(totalValue / response.data.length),
+        );
     } catch (error) {
         console.error('Erro ao buscar dados: ', error);
     }
@@ -62,27 +61,6 @@ export const chartConfigBilling = {
         color: 'hsl(var(--chart-2))',
     },
 } satisfies ChartConfig;
-
-/**
- * Função para formatar o tick do Gráfico de Faturamento
- * @param value - Valor do tick
- * @constant units - Array das unidades de medida
- * @var unitIndex - Índice do array 'units'
- * @return - Valor formatado
- */
-export function tickFormatter(value: number) {
-    const units = ['K', 'M', 'B', 'T'];
-    let unitIndex = -1;
-
-    while (value >= 1000 && unitIndex < units.length - 1) {
-        value /= 1000;
-        unitIndex++;
-    }
-
-    return unitIndex >= 0
-        ? `${Math.floor(value)}${units[unitIndex]}`
-        : value.toString();
-}
 
 // Dados do Gráfico de Vendas por Canal
 

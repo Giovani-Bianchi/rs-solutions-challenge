@@ -15,8 +15,9 @@ import {
     chartDataChannelSales,
     chartConfigChannelSales,
     getOrders,
-    tickFormatter,
 } from './dashboard-data';
+
+import { tickFormatter } from '@/utils/format';
 
 import {
     ChartContainer,
