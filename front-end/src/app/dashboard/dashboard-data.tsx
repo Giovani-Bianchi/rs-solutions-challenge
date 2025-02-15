@@ -1,6 +1,41 @@
 import { ChartConfig } from '@/components/ui/chart';
 
-// Dados do Gráfico de Faturamento
+import createApiInstance from '@/utils/api';
+
+// Dados da Seção de Estatísticas
+
+export const getOrders = async (
+    setAverageTicket: any,
+    setTotalOrders: any,
+    setTotalValueOrders: any,
+) => {
+    const api = await createApiInstance();
+    const formatter = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    });
+
+    try {
+        const response = await api.get('/orders', {
+            params: {
+                initialUpdatedAt: '2025-02-13T00:00:00Z',
+                finalUpdatedAt: '2025-02-13T23:59:59Z',
+            },
+        });
+        let totalValue = 0;
+
+        for (let index = 0; index < response.data.length; index++) {
+            const orderValue = response.data[index].total;
+            totalValue += orderValue;
+        }
+
+        setTotalValueOrders(formatter.format(totalValue));
+        setTotalOrders(response.data.length);
+        setAverageTicket(formatter.format(totalValue / response.data.length));
+    } catch (error) {
+        console.error('Erro ao buscar dados: ', error);
+    }
+};
 
 export const chartDataBilling = [
     { month: 'Janeiro', ano_atual: 186, ano_anterior: 801 },

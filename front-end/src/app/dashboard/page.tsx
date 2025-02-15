@@ -1,6 +1,8 @@
 // Definindo o componente para ser renderizado no lado do cliente (client side)
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { LuBanknote, LuBox } from 'react-icons/lu';
 import { IoArrowDown, IoArrowUp } from 'react-icons/io5';
 import { LiaChartPieSolid, LiaCoinsSolid } from 'react-icons/lia';
@@ -12,6 +14,7 @@ import {
     chartDataBilling,
     chartDataChannelSales,
     chartConfigChannelSales,
+    getOrders,
     tickFormatter,
 } from './dashboard-data';
 
@@ -47,25 +50,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { useIsLaptop } from '@/hooks/use-laptop';
 
-import useApi from '@/utils/api';
-
 export default function Dashboard() {
-    const api = useApi();
-
-    const testeApi = async () => {
-        try {
-            const response = await api.get('/orders', {
-                params: {
-                    initialUpdatedAt: '2025-02-13T00:00:00Z',
-                    finalUpdatedAt: '2025-02-13T23:59:59Z',
-                },
-            });
-            console.log(response.data);
-        } catch (error) {
-            console.error('Erro ao buscar dados:', error);
-        }
-    };
-
     const isLaptop = useIsLaptop();
 
     // Exibe o elemento com 10% dele visível na tela
@@ -79,6 +64,14 @@ export default function Dashboard() {
         triggerOnce: true,
         threshold: 0.4,
     });
+
+    const [totalValueOrders, setTotalValueOrders] = useState();
+    const [totalOrders, setTotalOrders] = useState();
+    const [averageTicket, setAverageTicket] = useState();
+
+    useEffect(() => {
+        getOrders(setAverageTicket, setTotalOrders, setTotalValueOrders);
+    }, []);
 
     return (
         <>
@@ -94,13 +87,6 @@ export default function Dashboard() {
                     finanças da sua empresa, conhecer as vendas de cada produto,
                     analisar informações da empresa e muito mais.
                 </p>
-
-                <button
-                    className="bg-primary-700 text-gray-50 p-2 rounded-md"
-                    onClick={testeApi}
-                >
-                    Teste API
-                </button>
             </section>
 
             <section id="statistics" className="flex flex-col gap-8">
@@ -128,7 +114,13 @@ export default function Dashboard() {
 
                             <div className="flex flex-col w-full gap-1">
                                 <h4 className="text-gray-900 text-xl font-semibold">
-                                    R$ 2754,24
+                                    {totalValueOrders == null ? (
+                                        <p className="text-gray-600 text-lg">
+                                            Carregando...
+                                        </p>
+                                    ) : (
+                                        totalValueOrders
+                                    )}
                                 </h4>
                                 <div className="flex items-center gap-1">
                                     <div className="flex items-center gap-[2px] p-[2px] text-green-medium text-xs font-medium bg-green-light border-[0.5px] border-green-pure rounded-lg">
@@ -155,7 +147,13 @@ export default function Dashboard() {
 
                             <div className="flex flex-col w-full gap-1">
                                 <h4 className="text-gray-900 text-xl font-semibold">
-                                    545
+                                    {totalOrders == null ? (
+                                        <p className="text-gray-600 text-lg">
+                                            Carregando...
+                                        </p>
+                                    ) : (
+                                        totalOrders
+                                    )}
                                 </h4>
                                 <div className="flex items-center gap-1">
                                     <div className="flex items-center gap-[2px] p-[2px] text-red-medium text-xs font-medium bg-red-light border-[0.5px] border-red-pure rounded-lg">
@@ -182,7 +180,13 @@ export default function Dashboard() {
 
                             <div className="flex flex-col w-full gap-1">
                                 <h4 className="text-gray-900 text-xl font-semibold">
-                                    R$ 47,95
+                                    {averageTicket == null ? (
+                                        <p className="text-gray-600 text-lg">
+                                            Carregando...
+                                        </p>
+                                    ) : (
+                                        averageTicket
+                                    )}
                                 </h4>
                                 <div className="flex items-center gap-1">
                                     <div className="flex items-center gap-[2px] p-[2px] text-green-medium text-xs font-medium bg-green-light border-[0.5px] border-green-pure rounded-lg">
