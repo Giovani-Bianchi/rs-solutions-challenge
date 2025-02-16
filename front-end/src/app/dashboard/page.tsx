@@ -12,7 +12,6 @@ import { MdFormatListBulleted } from 'react-icons/md';
 import {
     chartConfigBilling,
     chartDataBilling,
-    chartDataChannelSales,
     chartConfigChannelSales,
     getOrders,
 } from './dashboard-data';
@@ -46,6 +45,7 @@ import {
 } from '@/components/ui/table';
 
 import { motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 
 import { useInView } from 'react-intersection-observer';
 
@@ -66,12 +66,76 @@ export default function Dashboard() {
         threshold: 0.4,
     });
 
+    // useStates com os dados dos gráficos/tabelas
+
+    // Dados estatísticos (faturamento, pedidos e ticket médio)
     const [totalValueOrders, setTotalValueOrders] = useState();
     const [totalOrders, setTotalOrders] = useState();
     const [averageTicket, setAverageTicket] = useState();
 
+    // Canal Vitrine Totem
+    const [totemTotalSales, setTotemTotalSales] = useState();
+    const [totemSalesPercentage, setTotemSalesPercentage] = useState();
+    const [totemOrders, setTotemOrders] = useState();
+    const [totemAverageTicket, setTotemAverageTicket] = useState();
+    const [totemQuantityOfProducts, setTotemQuantityOfProducts] = useState();
+
+    // Canal Pdv Fácil
+    const [pdvTotalSales, setPdvTotalSales] = useState();
+    const [pdvSalesPercentage, setPdvSalesPercentage] = useState();
+    const [pdvOrders, setPdvOrders] = useState();
+    const [pdvAverageTicket, setPdvAverageTicket] = useState();
+    const [pdvQuantityOfProducts, setPdvQuantityOfProducts] = useState();
+
+    // Canal Menu Fácil
+    const [menuTotalSales, setMenuTotalSales] = useState();
+    const [menuSalesPercentage, setMenuSalesPercentage] = useState();
+    const [menuOrders, setMenuOrders] = useState();
+    const [menuAverageTicket, setMenuAverageTicket] = useState();
+    const [menuQuantityOfProducts, setMenuQuantityOfProducts] = useState();
+
+    // Canal Anota AI
+    const [anotaTotalSales, setAnotaTotalSales] = useState();
+    const [anotaSalesPercentage, setAnotaSalesPercentage] = useState();
+    const [anotaOrders, setAnotaOrders] = useState();
+    const [anotaAverageTicket, setAnotaAverageTicket] = useState();
+    const [anotaQuantityOfProducts, setAnotaQuantityOfProducts] = useState();
+
+    // Gráfico de Vendas por Canal
+    const [chartDataChannelSales, setChartDataChannelSales] = useState();
+
     useEffect(() => {
-        getOrders(setAverageTicket, setTotalOrders, setTotalValueOrders);
+        getOrders(
+            setAverageTicket,
+            setTotalOrders,
+            setTotalValueOrders,
+
+            setTotemTotalSales,
+            setTotemSalesPercentage,
+            setTotemOrders,
+            setTotemAverageTicket,
+            setTotemQuantityOfProducts,
+
+            setPdvTotalSales,
+            setPdvSalesPercentage,
+            setPdvOrders,
+            setPdvAverageTicket,
+            setPdvQuantityOfProducts,
+
+            setMenuTotalSales,
+            setMenuSalesPercentage,
+            setMenuOrders,
+            setMenuAverageTicket,
+            setMenuQuantityOfProducts,
+
+            setAnotaTotalSales,
+            setAnotaSalesPercentage,
+            setAnotaOrders,
+            setAnotaAverageTicket,
+            setAnotaQuantityOfProducts,
+
+            setChartDataChannelSales,
+        );
     }, []);
 
     return (
@@ -285,35 +349,51 @@ export default function Dashboard() {
                             </h3>
                         </div>
 
-                        <div className="flex justify-center" ref={ref1}>
+                        <div
+                            className={
+                                (cn('flex justify-center'),
+                                chartDataChannelSales
+                                    ? ''
+                                    : 'relative lg:h-[400px] h-[300px]')
+                            }
+                            ref={ref1}
+                        >
                             {inView1 ? (
-                                <ChartContainer
-                                    config={chartConfigChannelSales}
-                                    className="aspect-square lg:h-[400px] h-[300px] w-full"
-                                >
-                                    <PieChart>
-                                        <ChartTooltip
-                                            cursor={false}
-                                            content={
-                                                <ChartTooltipContent
-                                                    percentage={true}
-                                                />
-                                            }
-                                        />
+                                chartDataChannelSales ? (
+                                    <ChartContainer
+                                        config={chartConfigChannelSales}
+                                        className="aspect-square lg:h-[400px] h-[300px] w-full"
+                                    >
+                                        <PieChart>
+                                            <ChartTooltip
+                                                cursor={false}
+                                                content={
+                                                    <ChartTooltipContent
+                                                        percentage={true}
+                                                    />
+                                                }
+                                            />
 
-                                        <ChartLegend
-                                            className="flex flex-wrap"
-                                            content={<ChartLegendContent />}
-                                        />
+                                            <ChartLegend
+                                                className="flex flex-wrap"
+                                                content={<ChartLegendContent />}
+                                            />
 
-                                        <Pie
-                                            data={chartDataChannelSales}
-                                            dataKey="sales"
-                                            nameKey="channel"
-                                            innerRadius={!isLaptop ? 110 : 70}
-                                        ></Pie>
-                                    </PieChart>
-                                </ChartContainer>
+                                            <Pie
+                                                data={chartDataChannelSales}
+                                                dataKey="sales"
+                                                nameKey="channel"
+                                                innerRadius={
+                                                    !isLaptop ? 110 : 70
+                                                }
+                                            ></Pie>
+                                        </PieChart>
+                                    </ChartContainer>
+                                ) : (
+                                    <p className="text-gray-600 text-sm absolute-center">
+                                        Carregando...
+                                    </p>
+                                )
                             ) : (
                                 <div></div>
                             )}
@@ -349,7 +429,9 @@ export default function Dashboard() {
                                             <TableHead>Vendas (R$)</TableHead>
                                             <TableHead>%</TableHead>
                                             <TableHead>Pedidos</TableHead>
-                                            <TableHead>Ticket Médio</TableHead>
+                                            <TableHead>
+                                                Ticket Médio (R$)
+                                            </TableHead>
                                             <TableHead>
                                                 Qtd de Produtos
                                             </TableHead>
@@ -359,33 +441,204 @@ export default function Dashboard() {
                                     <TableBody>
                                         <TableRow>
                                             <TableCell>Vitrine Totem</TableCell>
-                                            <TableCell>10.540.500,00</TableCell>
-                                            <TableCell>60%</TableCell>
-                                            <TableCell>67,982</TableCell>
-                                            <TableCell>42,89%</TableCell>
-                                            <TableCell>167,892</TableCell>
+                                            <TableCell>
+                                                {totemTotalSales == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    totemTotalSales
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {totemSalesPercentage ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    totemSalesPercentage + '%'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {totemOrders == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    totemOrders
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {totemAverageTicket == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    totemAverageTicket
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {totemQuantityOfProducts ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    totemQuantityOfProducts
+                                                )}
+                                            </TableCell>
                                         </TableRow>
 
-                                        <TableRow subrow={true}>
-                                            <TableCell icon={true}>
-                                                Salão
+                                        <TableRow>
+                                            <TableCell>Pdv Fácil</TableCell>
+                                            <TableCell>
+                                                {pdvTotalSales == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    pdvTotalSales
+                                                )}
                                             </TableCell>
-                                            <TableCell>7.540.500,00</TableCell>
-                                            <TableCell>40%</TableCell>
-                                            <TableCell>57,982</TableCell>
-                                            <TableCell>30,89%</TableCell>
-                                            <TableCell>127,892</TableCell>
+                                            <TableCell>
+                                                {pdvSalesPercentage == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    pdvSalesPercentage + '%'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {pdvOrders == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    pdvOrders
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {pdvAverageTicket == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    pdvAverageTicket
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {pdvQuantityOfProducts ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    pdvQuantityOfProducts
+                                                )}
+                                            </TableCell>
                                         </TableRow>
 
-                                        <TableRow subrow={true}>
-                                            <TableCell icon={true}>
-                                                Drive Thru
+                                        <TableRow>
+                                            <TableCell>Menu Fácil</TableCell>
+                                            <TableCell>
+                                                {menuTotalSales == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    menuTotalSales
+                                                )}
                                             </TableCell>
-                                            <TableCell>3.000.000,00</TableCell>
-                                            <TableCell>20%</TableCell>
-                                            <TableCell>10,000</TableCell>
-                                            <TableCell>10%</TableCell>
-                                            <TableCell>50,000</TableCell>
+                                            <TableCell>
+                                                {menuSalesPercentage == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    menuSalesPercentage + '%'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {menuOrders == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    menuOrders
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {menuAverageTicket == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    menuAverageTicket
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {menuQuantityOfProducts ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    menuQuantityOfProducts
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+
+                                        <TableRow>
+                                            <TableCell>Anota AI</TableCell>
+                                            <TableCell>
+                                                {anotaTotalSales == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    anotaTotalSales
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {anotaSalesPercentage ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    anotaSalesPercentage + '%'
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {anotaOrders == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    anotaOrders
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {anotaAverageTicket == null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    anotaAverageTicket
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                {anotaQuantityOfProducts ==
+                                                null ? (
+                                                    <p className="text-gray-600 text-sm">
+                                                        Carregando...
+                                                    </p>
+                                                ) : (
+                                                    anotaQuantityOfProducts
+                                                )}
+                                            </TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>

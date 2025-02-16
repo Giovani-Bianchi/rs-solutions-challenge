@@ -16,6 +16,10 @@
     .left-indicator {
         @apply absolute top-[5px] left-[-18px] w-[5px] h-6 rounded-r-lg bg-primary-700;
     }
+
+    .absolute-center {
+        @apply absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%];
+    }
 }
 
 /* Shadcn UI Root Colors */
