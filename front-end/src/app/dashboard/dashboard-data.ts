@@ -9,6 +9,7 @@ import { brlFormatter } from '@/utils/format';
  * Função que retorna os dados de pedidos da Seru API
  * @param setStats - useState para armazenar os dados dos pedidos
  */
+/* eslint-disable */
 export const getOrders = async (setStats: Function) => {
     const api = await createApiInstance();
 
@@ -21,8 +22,8 @@ export const getOrders = async (setStats: Function) => {
         });
 
         let totalValue = 0;
-        let totalOrders = response.data.length;
-        let channelData: Record<string, any> = {
+        const totalOrders = response.data.length;
+        const channelData: Record<string, any> = {
             totem: { totalSales: 0, orders: 0, quantityOfProducts: 0 },
             'pdv-facil': { totalSales: 0, orders: 0, quantityOfProducts: 0 },
             'menu-facil': { totalSales: 0, orders: 0, quantityOfProducts: 0 },
@@ -41,6 +42,8 @@ export const getOrders = async (setStats: Function) => {
                     order.items[0].quantity;
             }
         });
+
+        /* eslint-enable */
 
         // Calculando estatísticas e formatando valores
         Object.keys(channelData).forEach((channel) => {

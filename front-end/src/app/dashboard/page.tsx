@@ -44,14 +44,16 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { cn } from '@/lib/utils';
 
 import { useInView } from 'react-intersection-observer';
 
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useIsLaptop } from '@/hooks/use-laptop';
 
 export default function Dashboard() {
+    const isMobile = useIsMobile();
     const isLaptop = useIsLaptop();
 
     // Exibe o elemento com 10% dele visível na tela
@@ -154,11 +156,18 @@ export default function Dashboard() {
                         Estatísticas
                     </h2>
 
-                    <motion.div
-                        className="grid lg:grid-cols-3 xl:gap-12 gap-6 min-h-[125px]"
-                        initial={{ opacity: 0, y: -50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, ease: 'easeInOut' }}
+                    <m.div
+                        className={cn(
+                            'grid lg:grid-cols-3 xl:gap-12 gap-6 min-h-[125px]',
+                            isMobile ? '!opacity-100 !translate-y-0' : '',
+                        )}
+                        initial={!isMobile ? { opacity: 0, y: -50 } : undefined}
+                        animate={!isMobile ? { opacity: 1, y: 0 } : undefined}
+                        transition={
+                            !isMobile
+                                ? { duration: 0.5, ease: 'easeInOut' }
+                                : undefined
+                        }
                     >
                         <div className="bg-white rounded-lg p-3 components-shadow">
                             <div className="flex gap-1 min-h-10 text-gray-900">
@@ -258,7 +267,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </m.div>
                 </div>
 
                 <div className="flex flex-col gap-4 p-3 bg-white rounded-lg components-shadow">
@@ -405,14 +414,24 @@ export default function Dashboard() {
 
                     <div className="md:px-3 md:pb-3" ref={ref4}>
                         {inView4 ? (
-                            <motion.div
+                            <m.div
                                 className="lg:max-h-[400px] max-h-[300px] w-full relative overflow-auto rounded-t-lg"
-                                initial={{ opacity: 0, y: 50 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    duration: 0.5,
-                                    ease: 'easeInOut',
-                                }}
+                                initial={
+                                    !isMobile
+                                        ? { opacity: 0, y: 50 }
+                                        : undefined
+                                }
+                                animate={
+                                    !isMobile ? { opacity: 1, y: 0 } : undefined
+                                }
+                                transition={
+                                    !isMobile
+                                        ? {
+                                              duration: 0.5,
+                                              ease: 'easeInOut',
+                                          }
+                                        : undefined
+                                }
                             >
                                 <Table>
                                     <TableHeader className="sticky top-0">
@@ -486,7 +505,7 @@ export default function Dashboard() {
                                         )}
                                     </TableBody>
                                 </Table>
-                            </motion.div>
+                            </m.div>
                         ) : (
                             <div></div>
                         )}

@@ -3,7 +3,10 @@
 
 import { useState } from 'react';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
+import { cn } from '@/lib/utils';
+
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 
 export default function Register() {
+    const isMobile = useIsMobile();
+
     // Estado que a partir dele, altera o ícone do input de senha e o tipo do input de senha
     const [passwordVisibility, setPasswordVisibility] = useState(true);
 
@@ -31,14 +36,21 @@ export default function Register() {
                 </div>
 
                 <div className="2xl:w-3/5 lg:w-4/5 md:w-11/12 sm:w-4/5 w-11/12 flex flex-col justify-center gap-8 pb-16">
-                    <motion.div
-                        className="flex flex-col gap-4"
-                        initial={{ y: 85 }}
-                        animate={{ y: 0 }}
-                        transition={{
-                            duration: 1,
-                            ease: 'easeInOut',
-                        }}
+                    <m.div
+                        className={cn(
+                            'flex flex-col gap-4',
+                            isMobile ? '!translate-y-0' : '',
+                        )}
+                        initial={!isMobile ? { y: 85 } : undefined}
+                        animate={!isMobile ? { y: 0 } : undefined}
+                        transition={
+                            !isMobile
+                                ? {
+                                      duration: 1,
+                                      ease: 'easeInOut',
+                                  }
+                                : undefined
+                        }
                     >
                         <h1 className="text-gray-900 lg:text-4xl text-3xl font-semibold">
                             Sign Up
@@ -47,23 +59,38 @@ export default function Register() {
                             Registre-se para acessar o Seru Dashboard e
                             acompanhar seus negócios de um jeito simples!
                         </p>
-                    </motion.div>
+                    </m.div>
 
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
-                            <motion.div
-                                initial={{ opacity: 0, y: 90 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    duration: 1,
-                                    ease: 'easeInOut',
-                                }}
+                            <m.div
+                                className={
+                                    isMobile
+                                        ? '!opacity-100 !translate-y-0'
+                                        : ''
+                                }
+                                initial={
+                                    !isMobile
+                                        ? { opacity: 0, y: 90 }
+                                        : undefined
+                                }
+                                animate={
+                                    !isMobile ? { opacity: 1, y: 0 } : undefined
+                                }
+                                transition={
+                                    !isMobile
+                                        ? {
+                                              duration: 1,
+                                              ease: 'easeInOut',
+                                          }
+                                        : undefined
+                                }
                             >
                                 <Input
                                     type="text"
                                     placeholder="Nome de Usuário"
                                 />
-                            </motion.div>
+                            </m.div>
 
                             <Input type="email" placeholder="E-mail" />
 
@@ -88,14 +115,29 @@ export default function Register() {
                                 </div>
                             </div>
 
-                            <motion.div
-                                className="relative"
-                                initial={{ opacity: 0, y: -90 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{
-                                    duration: 1,
-                                    ease: 'easeInOut',
-                                }}
+                            <m.div
+                                className={cn(
+                                    'relative',
+                                    isMobile
+                                        ? '!opacity-100 !translate-y-0'
+                                        : '',
+                                )}
+                                initial={
+                                    !isMobile
+                                        ? { opacity: 0, y: -90 }
+                                        : undefined
+                                }
+                                animate={
+                                    !isMobile ? { opacity: 1, y: 0 } : undefined
+                                }
+                                transition={
+                                    !isMobile
+                                        ? {
+                                              duration: 1,
+                                              ease: 'easeInOut',
+                                          }
+                                        : undefined
+                                }
                             >
                                 <Input
                                     type={
@@ -120,21 +162,26 @@ export default function Register() {
                                         <IoMdEyeOff size={24} />
                                     )}
                                 </div>
-                            </motion.div>
+                            </m.div>
                         </div>
 
-                        <motion.div
-                            initial={{ y: -75 }}
-                            animate={{ y: 0 }}
-                            transition={{
-                                duration: 1,
-                                ease: 'easeInOut',
-                            }}
+                        <m.div
+                            className={isMobile ? '!translate-y-0' : ''}
+                            initial={!isMobile ? { y: -75 } : undefined}
+                            animate={!isMobile ? { y: 0 } : undefined}
+                            transition={
+                                !isMobile
+                                    ? {
+                                          duration: 1,
+                                          ease: 'easeInOut',
+                                      }
+                                    : undefined
+                            }
                         >
                             <Button className="w-full" variant="default">
                                 Registrar-se
                             </Button>
-                        </motion.div>
+                        </m.div>
                     </div>
                 </div>
 
