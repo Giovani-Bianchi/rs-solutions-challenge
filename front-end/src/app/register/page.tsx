@@ -14,8 +14,9 @@ import Image from 'next/image';
 import brandImg from '@public/brand/rssolutions-brand.png';
 import pcMokcupImg from '@public/login/pc-dashboard-mockup.png';
 
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import FormInput from '@/components/form/formInput';
+
 import { IoMdEye, IoMdEyeOff } from 'react-icons/io';
 
 export default function Register() {
@@ -28,9 +29,27 @@ export default function Register() {
     const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
         useState(true);
 
+    // Estado para armazenar o valor dos inputs
+    const [inputsValue, setInputsValue] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+
+    // Função para chamar o estado que armazena o valor dos inputs
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputsValue({ ...inputsValue, [e.target.name]: e.target.value });
+    };
+
+    // Função para prevenir o carregamento da página ao clicar no botão de registrar-se
+    const handleSubmit = (e: any) => {
+        e.preventDefault();
+    };
+
     return (
         <main className="grid md:grid-cols-2 h-screen overflow-hidden">
-            <section className="flex flex-col justify-between items-center py-12">
+            <section className="flex flex-col justify-between items-center py-6">
                 <div className="2xl:w-3/4 w-11/12">
                     <Image src={brandImg} alt="Logo" width={130} />
                 </div>
@@ -61,7 +80,10 @@ export default function Register() {
                         </p>
                     </m.div>
 
-                    <div className="flex flex-col gap-8">
+                    <form
+                        className="flex flex-col gap-8"
+                        onSubmit={handleSubmit}
+                    >
                         <div className="flex flex-col gap-4">
                             <m.div
                                 className={
@@ -86,20 +108,34 @@ export default function Register() {
                                         : undefined
                                 }
                             >
-                                <Input
+                                <FormInput
+                                    name="name"
                                     type="text"
                                     placeholder="Nome de Usuário"
+                                    pattern="^[A-Za-z0-9]{3,16}$"
+                                    onChange={onChange}
+                                    errorMessage="O nome de usuário deve ter entre 3 e 16 caracteres e nenhum caractere especial"
                                 />
                             </m.div>
 
-                            <Input type="email" placeholder="E-mail" />
+                            <FormInput
+                                name="email"
+                                type="email"
+                                placeholder="E-mail"
+                                onChange={onChange}
+                                errorMessage="O e-mail inserido é inválido"
+                            />
 
                             <div className="relative">
-                                <Input
+                                <FormInput
+                                    name="password"
                                     type={
                                         passwordVisibility ? 'password' : 'text'
                                     }
                                     placeholder="Senha"
+                                    pattern="^[A-Za-z0-9!@#$%^&*]{8,}$"
+                                    onChange={onChange}
+                                    errorMessage="A senha deve ter no mínimo 8 caracteres"
                                 />
                                 <div
                                     className="text-gray-500 absolute top-4 right-4 cursor-pointer transition hover:text-gray-600"
@@ -139,13 +175,17 @@ export default function Register() {
                                         : undefined
                                 }
                             >
-                                <Input
+                                <FormInput
+                                    name="confirmPassword"
                                     type={
                                         confirmPasswordVisibility
                                             ? 'password'
                                             : 'text'
                                     }
                                     placeholder="Confirme a sua senha"
+                                    pattern={inputsValue.password}
+                                    onChange={onChange}
+                                    errorMessage="As senhas digitadas são diferentes"
                                 />
 
                                 <div
@@ -182,7 +222,7 @@ export default function Register() {
                                 Registrar-se
                             </Button>
                         </m.div>
-                    </div>
+                    </form>
                 </div>
 
                 <div className="2xl:w-3/5 lg:w-4/5 md:w-11/12 sm:w-4/5 w-11/12">
